@@ -36,7 +36,7 @@ namespace sms_mvc_web_app.Controllers
             await dbContext.Students.AddAsync(student);
             await dbContext.SaveChangesAsync();
 
-            return View();
+            return RedirectToAction("List", "Student"); ;
 
         }
 
@@ -73,7 +73,9 @@ namespace sms_mvc_web_app.Controllers
             return RedirectToAction("List", "Student");
         }
 
+        
         [HttpPost]
+        [ActionName("DeleteByModel")]
         public async Task<IActionResult> Delete(Student viewModel)
         {
             var student = await dbContext.Students.AsNoTracking()
@@ -85,7 +87,20 @@ namespace sms_mvc_web_app.Controllers
             }
 
             return RedirectToAction("List", "Student");
-
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var student = await dbContext.Students.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (student is not null)
+            {
+                dbContext.Students.Remove(student);
+                await dbContext.SaveChangesAsync();
+            }
+            return RedirectToAction("List", "Student");
+        }
+
     }
 }
